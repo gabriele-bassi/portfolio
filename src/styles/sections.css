@@ -1,0 +1,1119 @@
+/* ==========================================================================
+   Sezioni: hero, chi sono, competenze, percorso, progetti, contatti
+   ========================================================================== */
+
+/* --- Hero ----------------------------------------------------------------- */
+
+.hero {
+  /*
+   * La spaziatura verticale vive in una variabile perche' serve due volte:
+   * qui e come margine negativo del ritratto, che sul desktop esce dal
+   * riquadro della sezione invece di starci dentro.
+   */
+  --hero-pad: clamp(48px, 9vw, 92px);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: calc(100svh - var(--bar));
+  padding-block: var(--hero-pad);
+}
+
+.hero__grid {
+  display: grid;
+  gap: 30px;
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hero__avatar-cell {
+  position: relative;
+  isolation: isolate;
+  width: fit-content;
+}
+
+/*
+ * Alone morbido dietro al ritratto: stacca la foto dal fondo senza
+ * incorniciarla. Su mobile il ritratto e' un cerchio, che non sembra mai
+ * "incastrato" in un riquadro.
+ */
+.hero__avatar-cell::before {
+  content: '';
+  position: absolute;
+  inset: -26%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow-1), transparent 76%);
+  filter: blur(8px);
+}
+
+.hero__avatar {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: none;
+  background: var(--bg-sunken);
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 18px 40px -22px rgba(0, 0, 0, 0.9);
+}
+
+.hero__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * Velatura in basso: la foto ha un fondo chiaro che sul tema scuro
+ * diventerebbe un blocco luminoso. La sfumatura la riporta dentro la pagina
+ * invece di lasciarla galleggiare sopra.
+ */
+.hero__avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--scrim) 0%, transparent 48%);
+}
+
+.hero__avatar--fallback {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+/*
+ * Riga di stato, non un badge: niente bordo, niente fondo, niente pillola.
+ * Prende la voce delle etichette del sito — monospazio, maiuscole, traccia
+ * larga, testo attenuato — quindi si legge come una didascalia del hero e non
+ * come un widget appoggiato sopra. Quello che resta e' il pallino che batte.
+ */
+.hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/*
+ * Il pallino e' dell'accento del sito. La palette ne dichiara uno solo, e il
+ * verde che stava qui era l'unico colore del progetto a non venire da un
+ * token: e' la ragione per cui questo elemento sembrava aggiunto dall'esterno.
+ *
+ * L'alone e' un disco che si allarga e svanisce. Si animano trasformazione e
+ * opacita', non il colore: cosi' l'accento resta l'accento per tutta la durata
+ * del battito e non serve un secondo colore per la dissolvenza, che era
+ * esattamente il problema della versione precedente.
+ */
+.dot-live {
+  position: relative;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.dot-live::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: ping 2.6s var(--ease) infinite;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  60%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.hero__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+.hero__role {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  min-height: 1.6em;
+  font-family: var(--font-mono);
+  font-size: clamp(0.86rem, 2.4vw, 1.02rem);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+/* Caret del typewriter. */
+.hero__caret {
+  display: inline-block;
+  width: 0.55em;
+  margin-left: 2px;
+  border-bottom: 2px solid var(--accent);
+  transform: translateY(-0.14em);
+  animation: caret 1.05s steps(1, end) infinite;
+}
+
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero__lead {
+  max-width: 54ch;
+  color: var(--text-2);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.hero__scroll {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: clamp(40px, 6vw, 92px);
+  }
+
+  /*
+   * Il ritratto non sta in un riquadro: esce dal margine del container verso
+   * destra e dal padding della sezione verso l'alto, cosi' i suoi bordi destro
+   * e superiore sono il bordo della pagina, non una cornice. Restano dentro
+   * solo il lato sinistro e quello inferiore, ed e' quelli che sfumiamo.
+   *
+   * Il calcolo del margine destro copre entrambi i casi: sotto `--maxw` vale
+   * esattamente il padding del container, sopra vale il padding piu' lo spazio
+   * rimasto fuori dal container centrato.
+   */
+  .hero__avatar-cell {
+    order: 2;
+    width: 100%;
+    align-self: stretch;
+    margin: calc(-1 * var(--hero-pad)) calc((min(100vw, var(--maxw)) - 100vw) / 2 - var(--gutter)) 0 0;
+  }
+
+  /*
+   * Motivo a matrice di punti a sinistra del ritratto: una decorazione tecnica,
+   * volutamente diversa dai segni a mano libera di altri portfolio.
+   */
+  .hero__avatar-cell::after {
+    content: '';
+    position: absolute;
+    left: -8%;
+    top: 12%;
+    width: 38%;
+    height: 30%;
+    z-index: -1;
+    background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+    background-size: 11px 11px;
+    opacity: 0.75;
+  }
+
+  .hero__avatar-cell::before {
+    inset: -12% -6% -8% -18%;
+    filter: blur(18px);
+  }
+
+  .hero__text {
+    order: 1;
+    gap: 24px;
+  }
+
+  /*
+   * Maschera composta da quattro sfumature intersecate, una per lato: cosi'
+   * non c'e' nessun perimetro chiuso da vedere.
+   *
+   * Prima alto e destra restavano tagliati netti, perche' il ritratto usciva dal
+   * bordo della pagina e quel taglio era il bordo stesso. Con un marchio su fondo
+   * proprio il taglio si legge invece come il bordo di un riquadro: il fondo del
+   * file non coincide con il fondo della pagina, e si vede la differenza.
+   *
+   * Il basso sfuma molto piu' a lungo degli altri lati: e' li' che il segno
+   * incontra il fondo della sezione.
+   */
+  /*
+   * Niente fondo: con un marchio al posto della foto il riquadro di
+   * `--bg-sunken` si vedeva come un rettangolo piu' scuro della pagina, e
+   * sfumarlo non bastava a nasconderlo. Il caso senza immagine ha gia' il suo
+   * riquadro con bordo (`.hero__avatar--fallback`), quindi non serve a nessuno.
+   */
+  .hero__avatar {
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    filter: saturate(0.86) contrast(1.04);
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, #000 24%),
+      linear-gradient(to bottom, #000 58%, transparent 99%),
+      linear-gradient(to bottom, transparent 0%, #000 18%),
+      linear-gradient(to left, transparent 0%, #000 14%);
+    mask-image:
+      linear-gradient(to right, transparent 0%, #000 24%),
+      linear-gradient(to bottom, #000 58%, transparent 99%),
+      linear-gradient(to bottom, transparent 0%, #000 18%),
+      linear-gradient(to left, transparent 0%, #000 14%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /*
+   * Nessuna velatura. Serviva a fondere nella pagina il fondo chiaro di una
+   * foto, ma su un marchio trasparente diventa una banda scura sopra il disegno
+   * e si legge come il bordo di un riquadro. Il fondo lo sfuma gia' la maschera
+   * qui sopra, quindi non serve a nessuno dei due casi.
+   */
+  .hero__avatar::after {
+    display: none;
+  }
+
+  /* Senza foto resta un riquadro pieno: la maschera qui non serve. */
+  .hero__avatar--fallback {
+    font-size: 3rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: linear-gradient(150deg, var(--accent-soft), transparent 70%);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hero__scroll {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    bottom: 26px;
+    left: var(--gutter);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .hero__scroll::after {
+    content: '';
+    width: 46px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+}
+
+/* --- Chi sono ------------------------------------------------------------- */
+
+.about {
+  display: grid;
+  gap: clamp(30px, 5vw, 64px);
+}
+
+.about__bio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 68ch;
+  color: var(--text-2);
+}
+
+.about__bio p:first-child {
+  color: var(--text);
+  font-size: 1.12em;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding-top: 4px;
+}
+
+.facts__row {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.facts__row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.facts__row dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.facts__row dd {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--fs-small);
+}
+
+.facts__row dd a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur) var(--ease);
+}
+
+.facts__row dd a:hover {
+  text-decoration-color: var(--accent);
+}
+
+@media (min-width: 900px) {
+  /*
+   * Due colonne solo quando la scheda dei dettagli esiste davvero: se il
+   * profilo non ha quei campi, un `grid-template-columns` fisso lascerebbe una
+   * colonna vuota a destra.
+   */
+  .about:has(.facts) {
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  }
+}
+
+/* --- Progetti ------------------------------------------------------------- */
+
+.projects {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr));
+}
+
+.project {
+  /* Il bottone del titolo si estende su tutta la card: il riferimento e' la card. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  transition:
+    border-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.project:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-3px);
+}
+
+/*
+ * Cornice di fuoco sul riquadro invece che sul testo del titolo.
+ *
+ * L'anello predefinito del browser disegna un rettangolo attorno alle poche
+ * parole del titolo: dentro una card interattiva e' un bersaglio ambiguo. Qui
+ * il fuoco si vede su tutta la card, che e' quello che si attiva premendo
+ * Invio. `:has()` e' gia' usato altrove nel sito per lo stesso scopo.
+ */
+.project:has(.project__open:focus-visible) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.project__cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+}
+
+.project__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  flex: 1;
+}
+
+.project__meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.project__title {
+  font-family: var(--font-display);
+  font-size: 1.24rem;
+  line-height: 1.25;
+}
+
+/* Il titolo e' il bottone che apre la scheda, ma senza l'aspetto di un bottone. */
+.project__open {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/*
+ * Il bersaglio del titolo copre tutta la card: cosi' la scheda si apre anche
+ * toccando la copertina o la descrizione. E' un'ombra, non un secondo
+ * elemento: resta un solo punto da raggiungere con la tastiera.
+ */
+.project__open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--radius);
+}
+
+.project__open:focus-visible {
+  outline: none;
+}
+
+/*
+ * Tre righe, con i puntini.
+ *
+ * `-webkit-line-clamp` e' l'unico modo che funziona ovunque per troncare a un
+ * numero di righe: `text-overflow: ellipsis` taglia a una riga sola. La forma
+ * senza prefisso resta accanto per quando la supporteranno davvero.
+ */
+.project__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.project__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project__tag {
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+}
+
+.project__links {
+  /* Sopra il bersaglio che copre la card, altrimenti i due link veri non si
+   * potrebbero piu' cliccare: il clic finirebbe all'apertura della scheda. */
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.project__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--fs-small);
+  color: var(--accent);
+}
+
+.project__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/*
+ * Invito ad aprire la scheda. Non e' un link e non deve sembrarlo: sta nella
+ * voce delle etichette del sito, attenuato, e prende l'accento solo al
+ * passaggio del puntatore. Su mobile, dove il puntatore non esiste, e' l'unico
+ * segnale che la card si apre.
+ */
+.project__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.project__more svg {
+  font-size: 0.66rem;
+}
+
+.project:hover .project__more {
+  color: var(--accent);
+}
+
+/* --- Dettagli del progetto (sovraimpressione) ----------------------------- */
+
+/*
+ * Il dialogo nativo si apre nel livello superiore del browser: quello che sta
+ * sotto non ha bisogno di z-index piu' alti e non puo' finire davanti.
+ * `display: flex` sta solo su `[open]`: scriverlo sempre annullerebbe il
+ * `display: none` che il browser applica a un dialogo chiuso, e la scheda
+ * resterebbe in pagina.
+ */
+.pdialog[open] {
+  display: flex;
+  /* Mobile: scheda ancorata in basso, con la pagina ancora visibile sopra. */
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pdialog {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  /* Azzera le misure predefinite dell'elemento, che centrerebbe la scheda. */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.pdialog::backdrop {
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.pdialog[open]::backdrop {
+  animation: pdialog-velo 0.24s var(--ease) both;
+}
+
+@keyframes pdialog-velo {
+  from {
+    opacity: 0;
+  }
+}
+
+.pdialog__card {
+  --pdialog-pad: clamp(16px, 4.5vw, 26px);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* Non a tutto schermo: la striscia di pagina che resta sopra e' lo spazio
+   * da toccare per chiudere, oltre alla X. */
+  max-height: 92svh;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--bg-raised);
+  box-shadow: 0 -22px 60px -30px rgba(0, 0, 0, 0.9);
+  animation: pdialog-sale 0.3s var(--ease) both;
+}
+
+@keyframes pdialog-sale {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/*
+ * La X sta sulla scheda, non dentro l'area che scorre: altrimenti scorrendo
+ * una descrizione lunga uscirebbe dallo schermo, che e' esattamente il momento
+ * in cui serve di piu'. Fondo e sfocatura presi dai token della barra, cosi'
+ * resta leggibile anche sopra un'immagine chiara.
+ */
+.pdialog__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bar-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition:
+    border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+}
+
+.pdialog__close:hover {
+  border-color: var(--line-strong);
+  background: var(--accent-soft);
+}
+
+.pdialog__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* Lo scorrimento non si propaga alla pagina quando la scheda e' in fondo. */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdialog__media {
+  border-bottom: 1px solid var(--line);
+}
+
+/*
+ * Altezza fissa, immagine intera.
+ *
+ * Fissa perche' cambiando immagine la scheda non deve saltare: con `contain`
+ * uno screenshot alto e uno largo occupano lo stesso riquadro. `contain` e non
+ * `cover` perche' qui le immagini vanno lette, non riempire uno spazio.
+ */
+.pdialog__shot {
+  display: block;
+  width: 100%;
+  height: clamp(210px, 44svh, 520px);
+  object-fit: contain;
+  background: var(--bg-sunken);
+}
+
+.pdialog__thumbs {
+  display: flex;
+  gap: 8px;
+  padding: 12px var(--pdialog-pad);
+  /* Molte immagini scorrono in orizzontale invece di allungare la scheda. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdialog__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.pdialog__thumb {
+  flex: none;
+  width: 76px;
+  height: 50px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-sunken);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease);
+}
+
+.pdialog__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdialog__thumb:hover {
+  border-color: var(--line-strong);
+}
+
+.pdialog__thumb[aria-current='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.pdialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px var(--pdialog-pad) max(22px, env(safe-area-inset-bottom));
+}
+
+/*
+ * Progetto senza copertina: la X galleggerebbe sopra il primo testo, e con un
+ * titolo lungo ci finirebbe dentro. Le si riserva la sua fascia in cima invece
+ * di sperare che il testo sia corto — cosa che, verificato, non e' vera per
+ * tutti i progetti. Con l'immagine quel posto lo occupa la foto, ed e' li' che
+ * la X puo' stare sopra senza dare fastidio.
+ */
+.pdialog__card:not(:has(.pdialog__media)) .pdialog__body {
+  padding-top: 72px;
+}
+
+.pdialog__meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.pdialog__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6vw, 2.05rem);
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+}
+
+.pdialog__role {
+  font-size: var(--fs-small);
+  color: var(--accent);
+}
+
+/* Qui il testo si legge davvero, quindi torna alla misura del corpo pagina. */
+.pdialog__text {
+  max-width: 68ch;
+  color: var(--text-2);
+}
+
+.pdialog__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* Mobile: i comandi occupano tutta la larghezza, che e' il bersaglio piu'
+ * facile da centrare con il pollice. */
+.pdialog__links {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (min-width: 620px) {
+  .pdialog__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 760px) {
+  .pdialog[open] {
+    align-items: center;
+    padding: 28px;
+  }
+
+  .pdialog__card {
+    max-width: 880px;
+    max-height: 88svh;
+    border-bottom: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.9);
+    animation-name: pdialog-compare;
+  }
+
+  @keyframes pdialog-compare {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.985);
+    }
+  }
+
+  .pdialog__shot {
+    height: clamp(260px, 46svh, 560px);
+  }
+
+  .pdialog__body {
+    padding-inline: clamp(24px, 4vw, 40px);
+  }
+}
+
+/* --- Percorso (timeline) -------------------------------------------------- */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-item {
+  position: relative;
+  padding: 0 0 34px 26px;
+  border-left: 1px solid var(--line);
+}
+
+.tl-item:last-child {
+  padding-bottom: 0;
+  border-left-color: transparent;
+}
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+}
+
+.tl-item--current::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.tl-item__when {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* Titolo ed eventuale voto sulla stessa riga: il voto e' il dato che si vuole
+ * leggere per primo, quindi non deve stare in fondo alla descrizione. La riga
+ * va a capo da sola, quindi su schermo stretto il voto scende sotto il titolo
+ * invece di stringerlo. */
+.tl-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.tl-item__role {
+  /* Il margine sta sulla riga che contiene il titolo, non sul titolo: cosi'
+   * l'etichetta del voto resta allineata al testo. */
+  margin-top: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+}
+
+.tl-item__grade {
+  flex: none;
+  padding: 3px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.tl-item__org {
+  margin-top: 3px;
+  font-size: var(--fs-small);
+  color: var(--accent);
+}
+
+.tl-item__text {
+  margin-top: 10px;
+  max-width: 64ch;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.tl-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 13px;
+}
+
+/* --- Contatti ------------------------------------------------------------- */
+
+.contact {
+  display: grid;
+  gap: clamp(28px, 5vw, 56px);
+}
+
+.contact__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contact__email {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 5vw, 2.2rem);
+  line-height: 1.2;
+  color: var(--text);
+  word-break: break-word;
+  transition: color var(--dur) var(--ease);
+}
+
+.contact__email:hover {
+  color: var(--accent);
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  transition:
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.social svg {
+  font-size: 1.08rem;
+  color: var(--text-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.social:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.social:hover svg {
+  color: var(--accent);
+}
+
+@media (min-width: 900px) {
+  .contact {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* --- Stati vuoti e segnaposto --------------------------------------------- */
+
+.empty-note {
+  font-size: var(--fs-small);
+  color: var(--text-3);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.placeholder__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+/* --- Skeleton della prima schermata --------------------------------------- */
+
+.boot {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-block: clamp(60px, 12vw, 120px);
+}
+
+.boot__line {
+  height: 12px;
+}
+
+.boot__lead {
+  width: min(100%, 520px);
+}
+
+.boot__meta {
+  width: min(70%, 320px);
+}
+
+.boot__chips {
+  width: min(90%, 420px);
+  height: 34px;
+  border-radius: 999px;
+}
+
+.boot__name {
+  height: clamp(40px, 9vw, 76px);
+  width: min(60%, 420px);
+  border-radius: 10px;
+}
+
+.boot__avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 20px;
+}
+
+@media (min-width: 1000px) {
+  .boot__avatar {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+  }
+}

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="logo-titolo">
+  <title id="logo-titolo">Segno: tre sorgenti che convergono in un unico segnale</title>
+
+  <!--
+    Marchio di identita' del sito. Segno: tre nodi separati che convergono in una
+    sola barra, il segnale. E' la sintesi del disegno di partenza (frammenti che
+    si dissolvono in un fascio) ridotta a quello che sopravvive a 16px: la
+    sagoma, non i dettagli.
+
+    Geometria: griglia di 64 unita', disegno dentro 8..56, cosi' il segno resta
+    dentro l'80% centrale e non perde pezzi in un ritaglio quadrato o circolare.
+
+    Colori: grigio per le sorgenti, teal per il segnale, ciano per il nucleo.
+    Devono reggere sia #fbfaf8 sia #0e0f11, perche' un SVG caricato con <img>
+    non puo' adattarsi al tema: teal 4,1:1 sul chiaro e 4,4:1 sullo scuro,
+    grigio 3,6:1 e 4,9:1.
+  -->
+
+  <!-- Le tre sorgenti: tratti spessi, perche' a 16px un tratto sottile sparisce. -->
+  <g fill="none" stroke="#79858b" stroke-width="5.5" stroke-linecap="round">
+    <path d="M17 17 31 32" />
+    <path d="M17 32 31 32" />
+    <path d="M17 47 31 32" />
+  </g>
+
+  <g fill="#79858b">
+    <rect x="8" y="13" width="7" height="7" rx="1.6" />
+    <rect x="9" y="28.5" width="6" height="6" rx="1.4" />
+    <rect x="8" y="44" width="7" height="7" rx="1.6" />
+  </g>
+
+  <!-- Il segnale: quello che resta dopo la convergenza. -->
+  <rect x="30" y="26" width="26" height="12" rx="6" fill="#26887c" />
+  <rect x="35" y="30" width="20" height="4" rx="2" fill="#3ad2de" />
+</svg>

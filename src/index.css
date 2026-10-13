@@ -1,0 +1,15 @@
+/*
+ * Ordine di import significativo: i token e il reset vengono per primi,
+ * poi la struttura e infine gli atomi e le sezioni.
+ */
+@import './styles/theme.css';
+@import './styles/layout.css';
+@import './styles/components.css';
+@import './styles/sections.css';
+
+/* Il cambio tema e' immediato, ma un accenno di dissolvenza e' piu' gradevole. */
+body {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}

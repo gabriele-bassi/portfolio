@@ -1,0 +1,67 @@
+name: Deploy su GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          # Le action ufficiali usano gia' Node 24; allineiamo anche il build.
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build
+        # Le variabili VITE_* vengono "cotte" nel bundle a build time.
+        # Impostale in Settings -> Secrets and variables -> Actions -> Variables
+        # come VITE_DIRECTUS_URL (l'URL pubblico HTTPS di Directus).
+        env:
+          # Percorso su cui GitHub pubblica il sito: `/portfolio` per un sito di
+          # progetto, `/` con un dominio personalizzato. Lo dice GitHub invece
+          # di lasciarlo a un valore scritto a mano, che si dimentica al momento
+          # del passaggio al dominio. Una variable `VITE_BASE` lo forza.
+          VITE_BASE: ${{ vars.VITE_BASE || steps.pages.outputs.base_path }}
+          VITE_DIRECTUS_URL: ${{ vars.VITE_DIRECTUS_URL }}
+          VITE_ENABLE_FALLBACK: ${{ vars.VITE_ENABLE_FALLBACK || 'true' }}
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

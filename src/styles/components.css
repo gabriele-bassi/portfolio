@@ -1,0 +1,580 @@
+/* ==========================================================================
+   Atomi: bottoni, slider del tema, chip, filtri, avvisi, skeleton
+   ========================================================================== */
+
+/* --- Bottoni ------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: var(--fs-small);
+  font-weight: 550;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  transition:
+    background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.btn svg {
+  font-size: 1rem;
+  flex: none;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+/* Bottone quadrato per icone isolate (menu, chiusura). */
+.btn--icon {
+  width: 46px;
+  height: 46px;
+  min-height: 0;
+  padding: 0;
+  border-color: var(--line);
+  color: var(--text);
+  background: transparent;
+}
+
+.btn--icon:hover {
+  border-color: var(--line-strong);
+  background: var(--accent-soft);
+}
+
+/* --- Slider dark / light -------------------------------------------------- */
+
+.theme-toggle {
+  position: relative;
+  width: 64px;
+  height: 34px;
+  /*
+   * Nessun padding: il cursore e' posizionato con misure esatte, cosi' le due
+   * icone cadono davvero al centro delle rispettive meta'.
+   */
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-sunken);
+  cursor: pointer;
+}
+
+.theme-toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: transform var(--dur) var(--ease);
+}
+
+/* Dark: cursore a destra (luna). Light: a sinistra (sole).
+ * Corsa = 64 - 2(bordo) - 2*3(posizione) - 26(cursore) = 30px. */
+[data-theme='dark'] .theme-toggle__knob {
+  transform: translateX(30px);
+}
+
+/*
+ * Centratura: `place-items: center` sulla cella e `display: block` sull'svg.
+ * Le due icone sono disegnate sulla stessa griglia di 24x24 con lo stesso
+ * inchiostro, quindi condividono dimensione ottica e non serve compensare.
+ */
+.theme-toggle__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  font-size: 0.95rem;
+  color: var(--text-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.theme-toggle__icon svg {
+  display: block;
+}
+
+
+.theme-toggle__icon--active {
+  color: var(--accent-ink);
+}
+
+.theme-toggle--rail {
+  width: 46px;
+  height: 46px;
+  border-radius: 11px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  place-items: center;
+}
+
+@media (min-width: 1000px) {
+  /* Nel rail il toggle diventa un bottone singolo che mostra l'icona attiva. */
+  .theme-toggle--rail .theme-toggle__knob,
+  .theme-toggle--rail .theme-toggle__icon:not(.theme-toggle__icon--active) {
+    display: none;
+  }
+
+  .theme-toggle--rail .theme-toggle__icon--active {
+    font-size: 1.2rem;
+    color: var(--text-3);
+  }
+
+  .theme-toggle--rail:hover .theme-toggle__icon--active {
+    color: var(--text);
+  }
+}
+
+/* --- Chip (competenze) ---------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-raised);
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  transition:
+    color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+/*
+ * Punto tecnico davanti a ogni competenza, mostrato solo quando non c'e' un
+ * logo risolto: con l'icona presente il punto sarebbe rumore. `:not(:has())`
+ * evita di dover decidere in JavaScript quale dei due disegnare.
+ */
+.chip:not(:has(.chip__icon))::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--accent);
+  opacity: 0.6;
+}
+
+/* Logo ufficiale della tecnologia, risolto dal nome e reso in monocromatico
+ * per non trasformare la sezione in un arcobaleno di marchi. */
+.chip__icon {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--text-2);
+  transition:
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.chip:hover .chip__icon {
+  color: var(--accent);
+}
+
+.chip-groups {
+  display: grid;
+  gap: 26px;
+}
+
+.chip-group__label {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* --- Filtri (progetti) ---------------------------------------------------- */
+
+.filters {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 26px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* Su mobile i filtri scorrono in orizzontale invece di andare a capo. */
+  padding-bottom: 2px;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filter {
+  flex: none;
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  cursor: pointer;
+  transition:
+    color var(--dur) var(--ease),
+    background var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.filter:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.filter[aria-pressed='true'] {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* --- Avvisi e diagnostica ------------------------------------------------- */
+
+.alert {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.alert--error {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.alert__head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.alert__icon {
+  flex: none;
+  margin-top: 4px;
+  font-size: 1.15rem;
+}
+
+.alert--error .alert__icon {
+  color: var(--danger);
+}
+
+.alert__title {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  line-height: 1.3;
+}
+
+.alert__text {
+  margin-top: 6px;
+  max-width: 66ch;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.alert__url {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-3);
+  word-break: break-all;
+}
+
+.alert__hints {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-left: 18px;
+  list-style: disc;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+.alert__hints li {
+  list-style: disc;
+}
+
+.alert__hints li::marker {
+  color: var(--accent);
+}
+
+.alert__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.alert__note {
+  font-size: var(--fs-micro);
+  color: var(--text-3);
+}
+
+.diagnostics {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 15px 17px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-sunken);
+  font-size: var(--fs-small);
+}
+
+.diagnostics__row {
+  display: flex;
+  gap: 12px;
+}
+
+.diagnostics__row dt {
+  min-width: 142px;
+  flex: none;
+  color: var(--text-3);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-top: 3px;
+}
+
+.diagnostics__row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-2);
+  word-break: break-all;
+}
+
+/* --- Skeleton ------------------------------------------------------------- */
+
+.skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--line-soft) 25%, var(--line) 50%, var(--line-soft) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* --- Pagina di manutenzione ----------------------------------------------- */
+
+/*
+ * Il disegno e' tutto in CSS, deliberatamente: le immagini di questo sito le
+ * serve Directus, quindi proprio quando Directus non risponde non si
+ * potrebbero caricare. Un logo o un'illustrazione qui sarebbe un riquadro
+ * rotto.
+ *
+ * Anche lo stile resta quello del sito: righe da un pixel, un solo accento,
+ * nessun bagliore. E' un radar che cerca un segnale, e lo dice senza
+ * scriverlo.
+ */
+.maint {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 100svh;
+  padding: clamp(40px, 9vw, 84px) var(--gutter);
+}
+
+.maint__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 36rem;
+  text-align: center;
+}
+
+.maint__radar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(140px, 38vw, 184px);
+  aspect-ratio: 1;
+  margin-bottom: 6px;
+}
+
+/* Anelli concentrici. */
+.maint__radar::before,
+.maint__radar::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
+
+.maint__radar::before {
+  inset: 0;
+}
+
+.maint__radar::after {
+  inset: 24%;
+  border-color: var(--line-soft);
+}
+
+/* Matrice di punti, la stessa decorazione del hero, dissolta verso il bordo. */
+.maint__griglia {
+  position: absolute;
+  inset: -38%;
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 12px 12px;
+  -webkit-mask-image: radial-gradient(closest-side, #000 18%, transparent 76%);
+  mask-image: radial-gradient(closest-side, #000 18%, transparent 76%);
+  opacity: 0.6;
+}
+
+/* La spazzata: un settore che gira, disegnato con un gradiente conico. */
+.maint__spazzata {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 300deg,
+    var(--accent-soft) 356deg,
+    var(--accent) 360deg
+  );
+  animation: maint-giro 7s linear infinite;
+}
+
+@keyframes maint-giro {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Il centro: il pallino d'accento con il suo alone, come quello del hero. */
+.maint__punto {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 7px var(--accent-soft);
+}
+
+.maint__label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* Filetti laterali: la stessa riga editoriale delle intestazioni di sezione. */
+.maint__label::before,
+.maint__label::after {
+  content: '';
+  width: clamp(26px, 9vw, 70px);
+  height: 1px;
+  background: var(--line);
+}
+
+.maint__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.maint__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* --- Comparsa allo scroll ------------------------------------------------- */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.7s var(--ease);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   Preferenze utente
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .btn:hover,
+  .chip:hover {
+    transform: none;
+  }
+}

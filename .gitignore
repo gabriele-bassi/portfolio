@@ -1,0 +1,43 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# editor / os
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------------------------------------------------------------------------
+# Quello che resta fuori dal repository pubblico
+# ---------------------------------------------------------------------------
+
+# Documentazione locale: contiene indirizzi, percorsi e nomi della rete di casa.
+# Restano sul disco e si possono pubblicare in futuro, dopo averli ripuliti.
+README.md
+docs/
+
+# Dominio personalizzato: si rimette quando `gbassi.cc` avra' i record DNS.
+# Un CNAME dentro un sito di progetto fa puntare GitHub Pages a quel dominio,
+# che oggi non risolve: il sito risulterebbe irraggiungibile.
+public/CNAME
+
+# File di servizio dell'ambiente di lavoro, non del progetto.
+.freebuff/

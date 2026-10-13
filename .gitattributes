@@ -1,0 +1,13 @@
+# Il progetto e' scritto con fini di riga LF, ma la cartella di lavoro sta su
+# Windows: senza questa riga git convertirebbe i file in CRLF al primo tocco e
+# il repository sembrerebbe "tutto modificato" a ogni clone.
+* text=auto eol=lf
+
+# Immagini e caratteri non si toccano.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

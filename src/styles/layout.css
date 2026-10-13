@@ -1,0 +1,496 @@
+/* ==========================================================================
+   Struttura: barra mobile, menu a schermo intero, rail desktop, sezioni
+   Approccio mobile-first: qui c'e' solo il layout mobile, le regole per
+   schermi grandi arrivano dopo con le media query.
+   ========================================================================== */
+
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  position: relative;
+}
+
+/* ==========================================================================
+   Barra superiore (mobile)
+   ========================================================================== */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--bar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-inline: var(--gutter);
+  background: var(--bar-bg);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.bar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  transition: color var(--dur) var(--ease);
+}
+
+.bar__brand:hover {
+  color: var(--accent);
+}
+
+/* Segno di identita' minimo: un punto, invece di un monogramma inventato. */
+.brand-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--accent);
+}
+
+/*
+ * Logo dal CMS. Si adatta per altezza e lascia libera la larghezza: un marchio
+ * puo' avere qualunque proporzione, e fissare la larghezza lo deformerebbe o
+ * sposterebbe il resto della barra.
+ */
+.brand__logo {
+  display: block;
+  height: 22px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Avanzamento di lettura: riga orizzontale sotto la barra. */
+.bar__progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 100%;
+  transform: scaleX(var(--scroll, 0));
+  transform-origin: left center;
+  background: var(--accent);
+}
+
+/* ==========================================================================
+   Menu a schermo intero (mobile)
+   ========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  padding: 14px var(--gutter) 32px;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  animation: overlay-in 0.28s var(--ease) both;
+  overflow-y: auto;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.overlay__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--bar);
+  flex: none;
+  margin-bottom: 18px;
+}
+
+.overlay__nav {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.overlay__item {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line-soft);
+  min-height: 56px;
+}
+
+.overlay__num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-3);
+  min-width: 26px;
+}
+
+.overlay__label {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 7vw, 2rem);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.overlay__item[aria-current='true'] .overlay__label,
+.overlay__item[aria-current='true'] .overlay__num {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Rail laterale (desktop)
+   ========================================================================== */
+
+.rail {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .bar {
+    display: none;
+  }
+
+  .shell {
+    padding-left: var(--rail);
+  }
+
+  /*
+   * Pagina di manutenzione: qui il rail non c'e', quindi non deve esserci
+   * nemmeno lo spazio che gli si riserva. Senza questa riga la schermata resta
+   * spostata di mezzo rail verso destra, e si vede.
+   */
+  .shell--solo {
+    padding-left: 0;
+  }
+
+  .rail {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    width: var(--rail);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 22px;
+    background: var(--bg);
+    border-right: 1px solid var(--line-soft);
+  }
+
+  /* Riga di avanzamento verticale sul bordo del rail. */
+  .rail__progress {
+    position: absolute;
+    top: 0;
+    right: -1px;
+    width: 1px;
+    height: 100%;
+    transform: scaleY(var(--scroll, 0));
+    transform-origin: top center;
+    background: var(--accent);
+  }
+
+  /* Il rail e' largo 76px: il nome ci sta su due righe e si legge come una
+   * testata, invece di essere rimpicciolito fino a diventare illeggibile. */
+  .rail__brand {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    text-wrap: balance;
+    max-width: 64px;
+    padding-block: 6px;
+    color: var(--text-2);
+    transition: color var(--dur) var(--ease);
+  }
+
+  /* Nel rail il logo sta in 64px: l'altezza segue la larghezza disponibile. */
+  .rail__brand .brand__logo {
+    width: auto;
+    height: auto;
+    max-width: 56px;
+    max-height: 46px;
+    margin-inline: auto;
+    object-position: center;
+  }
+
+  .rail__brand:hover {
+    color: var(--accent);
+  }
+
+  .rail__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .rail__link {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    color: var(--text-3);
+    font-size: 1.05rem;
+    transition:
+      color var(--dur) var(--ease),
+      background var(--dur) var(--ease);
+  }
+
+  .rail__link:hover,
+  .rail__link:focus-visible {
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+
+  .rail__link[aria-current='true'] {
+    color: var(--accent);
+  }
+
+  /* Tacca che segnala la sezione attiva. */
+  .rail__link[aria-current='true']::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    width: 2px;
+    height: 18px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  /* Etichetta che compare al passaggio del puntatore. */
+  .rail__link::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(100% + 10px);
+    padding: 5px 9px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-4px);
+    pointer-events: none;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .rail__link:hover::after,
+  .rail__link:focus-visible::after {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================================================
+   Sezioni
+   ========================================================================== */
+
+.section {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+.section + .section {
+  border-top: 1px solid var(--line-soft);
+}
+
+.section__head {
+  margin-bottom: clamp(34px, 5vw, 58px);
+}
+
+/* Riga editoriale: numero, filetto, etichetta. */
+.section__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.section__num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.section__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.section__kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.section__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  max-width: 24ch;
+}
+
+.section__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.section__intro {
+  margin-top: 16px;
+  max-width: 62ch;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.foot {
+  border-top: 1px solid var(--line-soft);
+  padding-block: 34px 44px;
+}
+
+.foot__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: var(--fs-small);
+  color: var(--text-3);
+}
+
+/*
+ * Due righe invece di una: sopra il marchio e il comando, sotto i diritti
+ * separati da un filetto. La riga singola di prima metteva sullo stesso piano
+ * il nome e una spiegazione tecnica, che non hanno lo stesso peso.
+ */
+.foot__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.foot__brand {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.foot__brand .brand__logo {
+  height: 24px;
+}
+
+/*
+ * Nella voce delle etichette del sito, come tutti i comandi secondari.
+ * L'altezza minima e' quella di un bersaglio da dito: il testo e' piccolo, ma
+ * l'area da toccare no.
+ */
+.foot__up {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  transition: color var(--dur) var(--ease);
+}
+
+.foot__up svg {
+  font-size: 0.78rem;
+  transition: transform var(--dur) var(--ease);
+}
+
+.foot__up:hover {
+  color: var(--accent);
+}
+
+.foot__up:hover svg {
+  transform: translateY(-2px);
+}
+
+.foot__note {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+
+/* ==========================================================================
+   Utilità
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -70px;
+  left: var(--gutter);
+  z-index: 80;
+  padding: 11px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  transition: top 0.2s var(--ease);
+}
+
+.skip-link:focus {
+  top: 14px;
+}

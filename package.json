@@ -1,0 +1,28 @@
+{
+  "name": "portfolio-gbassi",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "icons": "node scripts/generate-skill-icons.mjs",
+    "icons:check": "node scripts/generate-skill-icons.mjs --check"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-icons": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "simple-icons": "^16.35.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}
