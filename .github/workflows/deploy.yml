@@ -35,8 +35,10 @@ jobs:
 
       - name: Build
         # Le variabili VITE_* vengono "cotte" nel bundle a build time.
-        # Impostale in Settings -> Secrets and variables -> Actions -> Variables
-        # come VITE_DIRECTUS_URL (l'URL pubblico HTTPS di Directus).
+        # Impostale in Settings -> Secrets and variables -> Actions -> Variables:
+        # - VITE_DIRECTUS_URL: l'URL pubblico HTTPS di Directus;
+        # - VITE_CONTACT_ENDPOINT: l'endpoint del form (es. Formcarry). Se manca,
+        #   il form contatti non compare. La CSP usa lo stesso valore.
         env:
           # Percorso su cui GitHub pubblica il sito: `/portfolio` per un sito di
           # progetto, `/` con un dominio personalizzato. Lo dice GitHub invece
@@ -44,6 +46,7 @@ jobs:
           # del passaggio al dominio. Una variable `VITE_BASE` lo forza.
           VITE_BASE: ${{ vars.VITE_BASE || steps.pages.outputs.base_path }}
           VITE_DIRECTUS_URL: ${{ vars.VITE_DIRECTUS_URL }}
+          VITE_CONTACT_ENDPOINT: ${{ vars.VITE_CONTACT_ENDPOINT }}
           VITE_ENABLE_FALLBACK: ${{ vars.VITE_ENABLE_FALLBACK || 'true' }}
         run: npm run build
 

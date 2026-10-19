@@ -18,13 +18,18 @@ function scriptHash(source) {
   return `sha256-${createHash('sha256').update(source, 'utf8').digest('base64')}`
 }
 
-/** Origine di Directus ("http://host:porta") a partire dall'indirizzo configurato. */
-function originOf(url) {
+/**
+ * Origine ("https://host:porta") di un indirizzo configurato.
+ *
+ * Il nome della variabile serve solo al messaggio d'errore: senza, un endpoint
+ * storto del form sembrerebbe un problema del CMS.
+ */
+function originOf(url, variable = 'VITE_DIRECTUS_URL') {
   try {
     return new URL(url).origin
   } catch {
     throw new Error(
-      `VITE_DIRECTUS_URL non e' un indirizzo valido ("${url}"): la Content-Security-Policy ` +
+      `${variable} non e' un indirizzo valido ("${url}"): la Content-Security-Policy ` +
         'non puo essere calcolata. Correggi la variabile in `.env.local` o su GitHub.',
     )
   }
@@ -37,12 +42,14 @@ function originOf(url) {
  * cosa riuscisse a finire dentro la pagina (un campo del CMS, una dipendenza
  * compromessa) potrebbe caricare script da un altro dominio ed eseguirli.
  *
- * Due valori non si possono scrivere a mano:
+ * Tre valori non si possono scrivere a mano:
  * - l'**impronta dello script inline** del tema, che cambia appena si tocca quel
  *   codice: se resta indietro, lo script viene bloccato e la pagina lampeggia in
  *   tema scuro prima di passare a quello chiaro;
  * - l'**indirizzo del CMS**, da cui arrivano dati e immagini: con un'origine
- *   sbagliata nella CSP il browser rifiuta le chiamate e la pagina resta vuota.
+ *   sbagliata nella CSP il browser rifiuta le chiamate e la pagina resta vuota;
+ * - l'**endpoint del form contatti**, verso cui parte un `fetch`: senza la sua
+ *   origine in `connect-src` il browser blocca l'invio.
  *
  * Per questo li ricava il plugin dalla stessa configurazione che usa l'applicazione
  * (`src/lib/config.js`), invece di duplicarli.
@@ -53,6 +60,7 @@ function originOf(url) {
  */
 function contentSecurityPolicy() {
   let cmsOrigin = null
+  let contactOrigin = null
 
   return {
     name: 'portfolio-csp',
@@ -62,6 +70,26 @@ function contentSecurityPolicy() {
       const url =
         config.env?.VITE_DIRECTUS_URL || process.env.VITE_DIRECTUS_URL || DEFAULT_DIRECTUS_URL
       cmsOrigin = originOf(String(url).replace(/\/+$/, ''))
+
+      /*
+       * Il form contatti invia a un servizio esterno. Se l'endpoint non e'
+       * configurato il form non viene disegnato, quindi non c'e' nessuna
+       * origine da aggiungere. Un valore presente ma invalido invece ferma la
+       * build: pubblicare una pagina in cui il browser blocca l'invio, senza
+       * un errore che lo spieghi, sarebbe peggio.
+       */
+      const contact =
+        config.env?.VITE_CONTACT_ENDPOINT || process.env.VITE_CONTACT_ENDPOINT || ''
+      const contactUrl = contact ? String(contact).trim() : ''
+      if (contactUrl) {
+        if (!/^https:\/\//i.test(contactUrl)) {
+          throw new Error(
+            'VITE_CONTACT_ENDPOINT deve essere un indirizzo HTTPS: la pagina pubblicata ' +
+              'gira in HTTPS e il browser bloccherebbe una richiesta in chiaro.',
+          )
+        }
+        contactOrigin = originOf(contactUrl, 'VITE_CONTACT_ENDPOINT')
+      }
     },
 
     transformIndexHtml: {
@@ -99,7 +127,9 @@ function contentSecurityPolicy() {
           "style-src 'self' 'unsafe-inline'",
           `img-src 'self' data: ${cmsOrigin}`,
           "font-src 'self'",
-          `connect-src 'self' ${cmsOrigin}`,
+          // Il form contatti invia con `fetch`: gli basta `connect-src`.
+          // `form-action` resta 'none' perche' nessun form fa un POST nativo.
+          `connect-src 'self' ${cmsOrigin}${contactOrigin ? ` ${contactOrigin}` : ''}`,
           "object-src 'none'",
           "base-uri 'none'",
           "form-action 'none'",
