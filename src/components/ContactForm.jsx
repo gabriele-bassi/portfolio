@@ -152,9 +152,6 @@ export default function ContactForm({ email }) {
         <h3 className="contact-form__title" id="contact-form-title">
           Scrivimi un messaggio
         </h3>
-        <p className="contact-form__intro">
-          Compila i campi: il messaggio arriva nella mia casella, non viene pubblicato.
-        </p>
       </div>
 
       {/*
